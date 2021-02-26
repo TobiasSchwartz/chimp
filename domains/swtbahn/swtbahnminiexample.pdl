@@ -1,0 +1,98 @@
+(Problem
+
+(ArgumentSymbols
+	signal1 signal4 signal5
+	signal2 signal3 
+	halt entry 
+	block1.up block1.down block2.up block2.down 
+	train1 train2 
+	platform1.up platform1.down platform2.up platform2.down 
+)
+
+(Instances halt signal1 signal4 signal5)
+(Instances entry signal2 signal3)
+(Instances signals halt entry)
+(Instances blocks block1.up block1.down block2.up block2.down)
+(Instances Train train1 train2)
+(Instances platforms platform1.up platform1.down platform2.up platform2.down)
+
+(Fluent c0 Connected(block1.up block1.down))
+(Constraint Release[0,0](c0))
+
+(Fluent c1 Connected(block1.down block1.up))
+(Constraint Release[0,0](c1))
+
+(Fluent c10 Connected(block1.down block2.up))
+(Constraint Release[0,0](c10))
+
+(Fluent c11 Connected(block2.up block1.down))
+(Constraint Release[0,0](c11))
+
+(Fluent c12 Connected(block2.down platform2.up))
+(Constraint Release[0,0](c12))
+
+(Fluent c13 Connected(platform2.up block2.down))
+(Constraint Release[0,0](c13))
+
+(Fluent c2 Connected(block2.up block2.down))
+(Constraint Release[0,0](c2))
+
+(Fluent c3 Connected(block2.down block2.up))
+(Constraint Release[0,0](c3))
+
+(Fluent c4 Connected(platform1.up platform1.down))
+(Constraint Release[0,0](c4))
+
+(Fluent c5 Connected(platform1.down platform1.up))
+(Constraint Release[0,0](c5))
+
+(Fluent c6 Connected(platform2.up platform2.down))
+(Constraint Release[0,0](c6))
+
+(Fluent c7 Connected(platform2.down platform2.up))
+(Constraint Release[0,0](c7))
+
+(Fluent c8 Connected(platform1.down block1.up))
+(Constraint Release[0,0](c8))
+
+(Fluent c9 Connected(block1.up platform1.down))
+(Constraint Release[0,0](c9))
+
+(Fluent s0 SignalAt(signal1 platform1.up))
+(Constraint Release[0,0](s0))
+
+(Fluent s1 SignalAt(signal2 block1.up))
+(Constraint Release[0,0](s1))
+
+(Fluent s2 SignalAt(signal3 block2.up))
+(Constraint Release[0,0](s2))
+
+(Fluent s3 SignalAt(signal4 platform2.down))
+(Constraint Release[0,0](s3))
+
+(Fluent s4 SignalAt(signal5 platform2.up))
+(Constraint Release[0,0](s4))
+
+(Fluent t0 TrainAt(train1 signal1))
+(Constraint Release[0,0](t0))
+
+(Fluent t1 TrainAt(train2 signal4))
+(Constraint Release[0,0](t1))
+
+
+(Task g1 drive_segment(train1 platform1.up signal4))
+# (Task g2 drive_segment(train2 signal4 signal5))
+
+)
+
+
+#####################################
+##
+## s1			s2			s3				 s4			
+## p1.u p1.d 	b1.u b1.d	b2.u b2.d	p2.u p2.d
+## 
+## Task: drive from s1 to s4
+##
+##
+##
+##

@@ -1,0 +1,42 @@
+module SWTbahnMiniExample
+    blocks
+      block1
+      block2
+    end
+    
+    platforms
+      platform1
+      platform2
+    end
+    
+    signals
+      halt  signal1
+      entry signal2
+      entry signal3
+      halt  signal4
+    end
+    
+    trains
+    	train1    
+    	train2    
+    end
+
+    layout
+      platform1.down -- block1.up
+      block1.down -- block2.up
+      block2.down -- platform2.up
+
+		  signal1 -- platform1.up
+		  signal2 -- block1.up
+		  signal3 -- block2.up
+		  signal4 -- platform2.down
+		
+		  train1 -- signal1
+		  train2 -- signal4
+    end
+    
+    goals
+    	train1 -- signal4
+    	train2 -- signal1
+    end
+end

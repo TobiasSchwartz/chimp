@@ -1,9 +1,11 @@
-package examples;
+package examples.chimp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 
@@ -15,85 +17,122 @@ import org.metacsp.framework.meta.MetaConstraint;
 import org.metacsp.utility.logging.MetaCSPLogging;
 
 import dwr.DWRNavigationMetaConstraint;
+import externalPathPlanning.LookUpTableDurationEstimator;
 import fluentSolver.Fluent;
 import fluentSolver.FluentConstraint;
 import fluentSolver.FluentNetworkSolver;
 import htn.HTNMetaConstraint;
 import htn.HTNPlanner;
+import htn.PlanReportroryItem;
 import htn.guessOrdering.GuessOrderingMetaConstraint;
 import htn.guessOrdering.GuessOrderingValOH;
 import htn.valOrderingHeuristics.DeepestFewestsubsNewestbindingsValOH;
+import htn.valOrderingHeuristics.DeepestWeightNewestbindingsValOH;
+import htn.valOrderingHeuristics.UnifyDeepestWeightNewestbindingsValOH;
+import htn.valOrderingHeuristics.UnifyEarlisttasksValOH;
+import htn.valOrderingHeuristics.UnifyFewestsubsEarliesttasksNewestbindingsValOH;
+import hybridDomainParsing.ClassicHybridDomain;
 import hybridDomainParsing.DomainParsingException;
 import hybridDomainParsing.HybridDomain;
-import postprocessing.PlanExtractor;
 import hybridDomainParsing.ProblemParser;
+import hybridDomainParsing.ProblemSpecificationParsingException;
+import hybridDomainParsing.SWTBahnProblemParser;
+import hybridDomainParsing.classic.antlr.ChimpClassicReader;
+import planner.CHIMP;
+import planner.CHIMPProblem;
+import postprocessing.PlanExtractor;
 import resourceFluent.FluentResourceUsageScheduler;
 import resourceFluent.FluentScheduler;
 import resourceFluent.ResourceUsageTemplate;
 import unify.CompoundSymbolicVariableConstraintSolver;
 
-public class TestDWRDomain {
-	
-	static final boolean LOGGING = false;
-	static final boolean NAVIGATION_PLANNING = true;
-	static final boolean GUESS_ORDERING = false;
+public class TestTrainDomain {
+
+    static final boolean LOGGING = true;
+    static final boolean GUESS_ORDERING = false;
     static final boolean PRINT_PLAN = true;
     static final boolean DRAW = false;
-	
-//	static final String ProblemPath = "domains/dwr/test/test_op_leave.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_op_enter.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_op_move.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_op_stack.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_op_unstack.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_op_put.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_op_take.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_m_load.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_m_unload.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_m_uncover0.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_m_uncover1.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_m_navigate0.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_m_navigate1.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_m_goto0.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_m_goto1.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_m_bring0.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_m_bring1.pdl";
-//	static String ProblemPath = "domains/dwr/test/test_m_bring2.pdl";
-	
-//	static String ProblemPath = "domains/dwr/comp_problems/dwr_problem_simple.pdl"; // runs into a trap -> 30 seconds runtime
-	static String ProblemPath = "domains/dwr/comp_problems/dwr_problem_0.pdl";
-//	static String ProblemPath = "domains/dwr/comp_problems/dwr_problem_1.pdl";
-//	static String ProblemPath = "domains/dwr/comp_problems/dwr_problem_2.pdl";
-//	static String ProblemPath = "domains/dwr/comp_problems/dwr_problem_3.pdl";
-//	static String ProblemPath = "domains/dwr/comp_problems/dwr_problem_3_c11_c23.pdl"; 
-//	static String ProblemPath = "domains/dwr/comp_problems/dwr_problem_3_c11_c21.pdl"; 
-//	static String ProblemPath = "domains/dwr/comp_problems/dwr_problem_3_c19_c23_c18.pdl"; 
-//	static String ProblemPath = "domains/dwr/comp_problems/dwr_problem_3_c19_c23_c18_c22.pdl"; 
-	
-//	static String ProblemPath = "domains/dwr/dwr_test_examples/bring/dwr_abb63_bring.pdl";
-//	static String ProblemPath = "domains/dwr/dwr_test_examples/bring/dwr_abb63_bring_c13_c21.pdl";
-//	static String ProblemPath = "domains/dwr/dwr_test_examples/bring/dwr_abb63_bring.pdl";
-//	static String ProblemPath = "domains/dwr/dwr_test_examples/bring/dwr_abb63_bring2.pdl";
-//	static String ProblemPath = "domains/dwr/dwr_test_examples/bring/dwr_abb63_bring2_c11_c21.pdl";
-//	static String ProblemPath = "domains/dwr/dwr_test_examples/move/dwr_problem_1_r1-c14-p4_r2-c24-p3.pdl";
-	
-	
-	
-	
-	public static void main(String[] args) {
-		plan_dwr(args);
-	}
 
-	public static double plan_dwr(String[] args) {
-//		Scanner s = new Scanner(System.in);
-//		System.out.println(s.nextInt());
+
+    public static void main(String[] args) {
+
+    	String problemFile = "domains/swtbahn/swtbahnminiexample.pdl";
+        String domainFile = "domains/swtbahn/swtbahn_domain.ddl";
+
+		ValueOrderingH valOH = new UnifyEarlisttasksValOH();
+//		ValueOrderingH valOH = new UnifyFewestsubsEarliesttasksNewestbindingsValOH();
+//		ValueOrderingH valOH = new UnifyFewestsubsNewestbindingsValOH();
+//		ValueOrderingH valOH = new DeepestNewestbindingsValOH();
+//		ValueOrderingH valOH = new DeepestWeightNewestbindingsValOH();
+//		ValueOrderingH valOH = new DeepestFewestsubsNewestbindingsValOH();
+//        ValueOrderingH valOH = new UnifyDeepestWeightNewestbindingsValOH();
+        
+        CHIMP.CHIMPBuilder builder;
+        
+        try {
+            builder = new CHIMP.CHIMPBuilder(domainFile, problemFile)
+                    .valHeuristic(valOH)
+                    .htnUnification(true);
+            if (GUESS_ORDERING) {
+                builder.guessOrdering(true);
+            }
+
+        } catch (DomainParsingException e) {
+            e.printStackTrace();
+            return;
+        }
+        CHIMP chimp = builder.build();
+
+//		MetaCSPLogging.setLevel(planner.getClass(), Level.FINEST);
+		MetaCSPLogging.setLevel(HTNMetaConstraint.class, Level.FINEST);
+
+		MetaCSPLogging.setLevel(Level.FINE);
+        if (!LOGGING) {
+            MetaCSPLogging.setLevel(Level.OFF);
+        }
+
+        System.out.println("Found plan? " + chimp.generatePlan());
+        chimp.printStats(System.out);
+
+        if (PRINT_PLAN) {
+            Variable[] planVector = chimp.extractActions();
+            int c = 0;
+            for (Variable act : planVector) {
+                if (act.getComponent() != null)
+                    System.out.println(c++ + ".\t" + act);
+            }
+
+            chimp.printFullPlan();
+            chimp.drawPlanHierarchy(100);
+            chimp.drawHierarchyNetwork();
+            chimp.drawSearchSpace();
+        }
+
+    }
+    
+	private static Set<String> extractSymbolicConstants(ClassicHybridDomain domain) {
+		Set<String> constants = new HashSet<>();
+		for (PlanReportroryItem pri : domain.getOperators()) {
+			constants.addAll(pri.getSymbolicConstants());
+		}
+		for (PlanReportroryItem pri : domain.getMethods()) {
+			constants.addAll(pri.getSymbolicConstants());
+		}
+		return constants;
+	}
+	
+	
+	// 
+	// COPY FROM TestDWRDomain
+	//
+	
+	public static double plan(String problemFileName, String domainFileName) {
 		
-		ProblemParser pp = new ProblemParser(ProblemPath);
+		ProblemParser pp = new ProblemParser(problemFileName);
 		
 		HybridDomain domain;
 		try {
-//			domain = new HybridDomain("domains/dwr/dwr.ddl");
-//			domain = new HybridDomain("domains/dwr/dwr_resources.ddl");
-			domain = new HybridDomain("domains/dwr/dwr_resources2.ddl");
+			domain = new HybridDomain(domainFileName);
 		} catch (DomainParsingException e) {
 			e.printStackTrace();
 			return 0;
@@ -125,8 +164,6 @@ public class TestDWRDomain {
 			MetaCSPLogging.setLevel(Level.OFF);
 		}
 
-		MetaCSPLogging.setLevel(planner.getClass(), Level.FINE);
-		
 		double planning_time = plan(planner, fluentSolver);
 		
 		Variable[] allFluents = fluentSolver.getVariables();
@@ -282,16 +319,8 @@ public class TestDWRDomain {
 			GuessOrderingMetaConstraint ordConstraint = new GuessOrderingMetaConstraint(guessOH);
 			planner.addMetaConstraint(ordConstraint);
 		}
-	
-		if (NAVIGATION_PLANNING) {
-			DWRNavigationMetaConstraint navConstraint = new DWRNavigationMetaConstraint();
-			planner.addMetaConstraint(navConstraint);
-		}
 		
 		planner.addMetaConstraint(htnConstraint);
 	}
-	
-
-
 
 }

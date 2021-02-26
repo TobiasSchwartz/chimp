@@ -1,0 +1,91 @@
+(Problem
+
+(ArgumentSymbols
+	signal1 signal19 signal17 
+	signal8 signal9 signal2 signal3 signal10 signal4 signal5 signal6 signal7 signal15 signal16 signal18 signal11 signal12 signal13 signal14 
+	halt entry 
+	block1.up block1.down block2.up block2.down block3.up block3.down block4.up block4.down block5.up block5.down block6.up block6.down block7.up block7.down 
+	train1 
+	platform1.up platform1.down platform2.up platform2.down 
+	point1.stem point1.side point1.straight point2.stem point2.side point2.straight 
+	halt entry crossings signals blocks trains platforms points 
+)
+
+(Instances halt signal1 signal19 signal17)
+(Instances entry signal8 signal9 signal2 signal3 signal10 signal4 signal5 signal6 signal7 signal15 signal16 signal18 signal11 signal12 signal13 signal14)
+(Instances signals halt entry)
+(Instances blocks block1.up block1.down block2.up block2.down block3.up block3.down block4.up block4.down block5.up block5.down block6.up block6.down block7.up block7.down)
+(Instances trains train1)
+(Instances platforms platform1.up platform1.down platform2.up platform2.down)
+(Instances points point1.stem point1.side point1.straight point2.stem point2.side point2.straight)
+
+(Fluent s3 SignalAt(signal5 block6.up))
+(Constraint Release[0,0](s3))
+
+(Fluent s4 SignalAt(signal6 block2.up))
+(Constraint Release[0,0](s4))
+
+(Fluent s5 SignalAt(signal7 block3.down))
+(Constraint Release[0,0](s5))
+
+(Fluent s6 SignalAt(signal8 block3.up))
+(Constraint Release[0,0](s6))
+
+(Fluent s7 SignalAt(signal9 block5.down))
+(Constraint Release[0,0](s7))
+
+(Fluent s8 SignalAt(signal10 block4.down))
+(Constraint Release[0,0](s8))
+
+(Fluent s9 SignalAt(signal11 block5.up))
+(Constraint Release[0,0](s9))
+
+(Fluent c0 Connected(block1.down point1.stem))
+(Constraint Release[0,0](c0))
+
+(Fluent c1 Connected(point1.stem block1.down))
+(Constraint Release[0,0](c1))
+
+(Fluent c2 Connected(block1.up point2.straight))
+(Constraint Release[0,0](c2))
+
+(Fluent c3 Connected(point2.straight block1.up))
+(Constraint Release[0,0](c3))
+
+(Fluent s11 SignalAt(signal13 block6.down))
+(Constraint Release[0,0](s11))
+
+(Fluent s10 SignalAt(signal12 block4.up))
+(Constraint Release[0,0](s10))
+
+(Fluent s13 SignalAt(signal15 block7.up))
+(Constraint Release[0,0](s13))
+
+(Fluent s12 SignalAt(signal14 block7.down))
+(Constraint Release[0,0](s12))
+
+(Fluent s15 SignalAt(signal17 platform1.up))
+(Constraint Release[0,0](s15))
+
+(Fluent s14 SignalAt(signal16 platform1.down))
+(Constraint Release[0,0](s14))
+
+(Fluent s17 SignalAt(signal19 platform2.up))
+(Constraint Release[0,0](s17))
+
+(Fluent s16 SignalAt(signal18 platform2.down))
+(Constraint Release[0,0](s16))
+
+(Fluent t0 TrainAt(train1 signal1))
+(Constraint Release[0,0](t0))
+
+(Fluent s0 SignalAt(signal2 block1.down))
+(Constraint Release[0,0](s0))
+
+(Fluent s1 SignalAt(signal3 block1.up))
+(Constraint Release[0,0](s1))
+
+(Fluent s2 SignalAt(signal4 block2.down))
+(Constraint Release[0,0](s2))
+
+)
